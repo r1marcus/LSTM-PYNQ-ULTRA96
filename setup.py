@@ -37,9 +37,9 @@ import os
 from glob import glob
 import site 
 
-if 'BOARD' not in os.environ or not (os.environ['BOARD'] == 'Pynq-Z1' or os.environ['BOARD'] == 'Pynq-Z2'):
-    print("Only supported on a Pynq Z1 or Z2 boards")
-    exit(1)
+if os.environ['BOARD'] != 'Ultra96' and os.environ['BOARD'] != 'Pynq-Z1' and os.environ['BOARD'] != 'Pynq-Z2':
+	print("Only supported on a Ultra96, Pynq-Z1 or Pynq-Z2 Board")
+	exit(1)
 
 setup(
     name = "lstm-pynq",
