@@ -54,3 +54,7 @@ setup(
     data_files = [(os.path.join('/home/xilinx/jupyter_notebooks/lstm',root.replace('notebooks/','')), [os.path.join(root, f) for f in files]) for root, dirs, files in os.walk('notebooks/')],
     description = "OCR using a hardware LSTM neural network"
 )
+
+if os.path.isdir(os.environ["PYNQ_JUPYTER_NOTEBOOKS"]+"/bnn/"):
+	shutil.rmtree(os.environ["PYNQ_JUPYTER_NOTEBOOKS"]+"/bnn/")
+shutil.copytree("notebooks/",os.environ["PYNQ_JUPYTER_NOTEBOOKS"]+"/bnn/")
