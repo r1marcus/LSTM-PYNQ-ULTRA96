@@ -59,6 +59,7 @@ class PynqLSTM(object):
                 else:
                     raise RuntimeError("Incorrect Overlay loaded")
         dllname = "{}-{}-{}-ocr-pynq.so".format(runtime, dataset, network)
+	print(os.path.join(LSTM_LIB_DIR, dataset, network, dllname))
         if dllname not in self._libraries:
             self._libraries[dllname] = self._ffi.dlopen(
 		os.path.join(LSTM_LIB_DIR, dataset, network, dllname))
