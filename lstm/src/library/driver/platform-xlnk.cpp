@@ -1,6 +1,5 @@
-/*
- *  Copyright (c) 2018, TU Kaiserslautern
- *	Copyright (c) 2018, Xilinx
+/******************************************************************************
+ *  Copyright (c) 2016, Xilinx, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -29,9 +28,18 @@
  *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- */
-
-#if ON_BOARD == 1
+ *****************************************************************************/
+/******************************************************************************
+ *
+ *
+ * @file platform-xlnk.cpp
+ *
+ * Definition of the platform init-deinit functions
+ * Call initPlatform() at the start of your program to
+ * get a DonutDriver handle
+ * 
+ *
+ *****************************************************************************/
 #include <cstring>
 #include <iostream>
 
@@ -40,35 +48,43 @@
 #include "platform.hpp"
 #include "xlnkdriver.hpp"
 
+//#ifdef ULTRA
+//  #define ADDR_REG_BASE 0xa0000000
+//#elif defined PYNQ
+ #define ADDR_REG_BASE 0x43c00000
+//#else
+ // #error Board is not supported. Can not set REG_BASE_ADDR
+//#endif
+
 static XlnkDriver* platform = 0;
 
 void platformSIGINTHandler(int signum) {
-	std::cout << "Caught SIGINT, forcing exit" << std::endl;
-	if(platform) {
-		platform->detach();
-	}
-	delete platform;
-	exit(1);
+  std::cout << "Caught SIGINT, forcing exit" << std::endl;
+  if(platform) {
+    platform->detach();
+  }
+  delete platform;
+  exit(1);
 }
+
 DonutDriver* initPlatform(bool cleanSIGINTExit) {
-	if (!platform) {
-		platform = new XlnkDriver(0x43c00000, 64 * 1024);
-	}
-	if (cleanSIGINTExit) {
-		struct sigaction action;
-		std::memset(&action, 0, sizeof(struct sigaction));
-		action.sa_handler = &platformSIGINTHandler;
-		int res = sigaction(SIGINT, &action, NULL);
-	}
-	return static_cast<DonutDriver*>(platform);
+  if (!platform) {
+    platform = new XlnkDriver(ADDR_REG_BASE, 64 * 1024);
+  }
+  if (cleanSIGINTExit) {
+    struct sigaction action;
+    std::memset(&action, 0, sizeof(struct sigaction));
+    action.sa_handler = &platformSIGINTHandler;
+    int res = sigaction(SIGINT, &action, NULL);
+  }
+  return static_cast<DonutDriver*>(platform);
 }
 
 void deinitPlatform(DonutDriver* driver) {
-	delete platform;
-	platform = 0;
+  delete platform;
+  platform = 0;
 }
 
 void loadBitFile(const char* accelName) {
-	//  Dummy function to keep the linker happy
+  //  Dummy function to keep the linker happy
 }
-#endif
