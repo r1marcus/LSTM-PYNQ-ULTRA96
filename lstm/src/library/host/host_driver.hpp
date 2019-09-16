@@ -85,7 +85,8 @@ void platformSIGINTHandler(int signum) {
 
 DonutDriver* initPlatform(bool cleanSIGINTExit) {
     if (!platform) {
-        platform = new XlnkDriver(0x43c00000, 64 * 1024);
+        //platform = new XlnkDriver(0x43c00000, 64 * 1024);
+        platform = new XlnkDriver(0xa0000000, 64 * 1024);
     }
     if (cleanSIGINTExit) {
         struct sigaction action;
