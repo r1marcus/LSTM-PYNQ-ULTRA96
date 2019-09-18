@@ -66,11 +66,11 @@ fi
 
 OLD_DIR=$(pwd)
 cd $XILINX_BNN_ROOT
-if [ -d "xilinx-tiny-cnn/" ]; then
-  echo "xilinx-tiny-cnn already cloned"
-else
-  git clone https://github.com/Xilinx/xilinx-tiny-cnn.git
-fi
+#if [ -d "xilinx-tiny-cnn/" ]; then
+#  echo "xilinx-tiny-cnn already cloned"
+#else
+#  git clone https://github.com/Xilinx/xilinx-tiny-cnn.git
+#fi
 cd $OLD_DIR
 
 if [[ ("$BOARD" == "Pynq-Z1") || ("$BOARD" == "Pynq-Z2") ]]; then
@@ -84,32 +84,33 @@ else
   exit 1
 fi
 
-TINYCNN_PATH=$XILINX_BNN_ROOT/xilinx-tiny-cnn
+#TINYCNN_PATH=$XILINX_BNN_ROOT/xilinx-tiny-cnn
 BNN_PATH=$XILINX_BNN_ROOT/network
 BNNLIB=$XILINX_BNN_ROOT/library
 HOSTLIB=$BNNLIB/host
 HLSLIB=$BNNLIB/hls
-HLSTOP=$BNN_PATH/$NETWORK/hw
+#HLSTOP=$BNN_PATH/plain/$NETWORK/hw
+HLSTOP=$BNN_PATH/plain/
 DRIVER_PATH=$BNNLIB/driver
 
 SRCS_HOSTLIB=$HOSTLIB/*.cpp
 SRCS_HLSLIB=$HLSLIB/*.cpp
 SRCS_HLSTOP=$HLSTOP/top.cpp
-SRCS_HOST=$BNN_PATH/$NETWORK/sw/main.cpp
+SRCS_HOST=$BNN_PATH/$NETWORK/main.cpp
 
 OUTPUT_DIR=$XILINX_BNN_ROOT/network/output/sw
 mkdir -p $OUTPUT_DIR
-OUTPUT_FILE="$OUTPUT_DIR/$RUNTIME-$NETWORK-$PLATFORM"
+OUTPUT_FILE="$OUTPUT_DIR/libhw-plain-$NETWORK-ocr-pynq"
 
 
-if [[ ("$RUNTIME" == "python_sw") ]]; then
-  SRCS_HOST=$BNN_PATH/$NETWORK/sw/main_python.cpp
-  SRCS_ALL="$SRCS_HOSTLIB $SRCS_HLSTOP $SRCS_HOST"
-  g++ -g -DOFFLOAD -DRAWHLS -std=c++11 -pthread -O2 -fPIC -shared $SRCS_ALL -I$VIVADOHLS_INCLUDE_PATH -I$TINYCNN_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so
-elif [[ ("$RUNTIME" == "python_hw") ]]; then
+#if [[ ("$RUNTIME" == "python_sw") ]]; then
+#  SRCS_HOST=$BNN_PATH/$NETWORK/sw/main_python.cpp
+#  SRCS_ALL="$SRCS_HOSTLIB $SRCS_HLSTOP $SRCS_HOST"
+#  g++ -g -DOFFLOAD -DRAWHLS -std=c++11 -pthread -O2 -fPIC -shared $SRCS_ALL -I$VIVADOHLS_INCLUDE_PATH -I$TINYCNN_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so
+#elif [[ ("$RUNTIME" == "python_hw") ]]; then
   SRCS_HOST=$BNN_PATH/$NETWORK/sw/main_python.cpp
   SRCS_ALL="$DRIVER_PATH/platform-xlnk.cpp $SRCS_HOSTLIB $SRCS_HOST"
-  g++ -g -DOFFLOAD -D$DEF_BOARD -std=c++11 -pthread -O3 -fPIC -shared $SRCS_ALL -I$DRIVER_PATH -I$VIVADOHLS_INCLUDE_PATH -I$TINYCNN_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so -lcma
-fi
+  g++ -g -DOFFLOAD -D$DEF_BOARD -std=c++11 -pthread -O3 -fPIC -shared $SRCS_ALL -I$DRIVER_PATH -I$VIVADOHLS_INCLUDE_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so -lcma
+#fi
 
 echo "Output at $OUTPUT_FILE"
