@@ -108,8 +108,11 @@ OUTPUT_FILE="$OUTPUT_DIR/libhw-plain-$NETWORK-ocr-pynq"
 #  SRCS_ALL="$SRCS_HOSTLIB $SRCS_HLSTOP $SRCS_HOST"
 #  g++ -g -DOFFLOAD -DRAWHLS -std=c++11 -pthread -O2 -fPIC -shared $SRCS_ALL -I$VIVADOHLS_INCLUDE_PATH -I$TINYCNN_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so
 #elif [[ ("$RUNTIME" == "python_hw") ]]; then
-  SRCS_HOST=$BNN_PATH/$NETWORK/sw/main_python.cpp
-  SRCS_ALL="$DRIVER_PATH/platform-xlnk.cpp $SRCS_HOSTLIB $SRCS_HOST"
+  #SRCS_HOST=$BNN_PATH/$NETWORK/sw/main_python.cpp
+  SRCS_HOST=$BNN_PATH/plain/$NETWORK/*.hpp
+  SRCS_ALL="$DRIVER_PATH/platform-xlnk.cpp $SRCS_HOSTLIB"
+  #SRCS_ALL="$DRIVER_PATH/platform-xlnk.cpp $SRCS_HOSTLIB $SRCS_HOST"
+
   g++ -g -DOFFLOAD -D$DEF_BOARD -std=c++11 -pthread -O3 -fPIC -shared $SRCS_ALL -I$DRIVER_PATH -I$VIVADOHLS_INCLUDE_PATH -I$HOSTLIB -I$HLSLIB -I$HLSTOP -o $OUTPUT_FILE.so -lcma
 #fi
 
